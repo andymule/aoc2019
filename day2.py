@@ -1,4 +1,6 @@
-import math, sys, pprint
+import math
+import sys
+import pprint
 
 filepath = "day2.txt"
 
