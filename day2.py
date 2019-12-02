@@ -18,7 +18,7 @@ codes = {
 	2 : lambda a,b : a * b,
 	3 : lambda a,b : a - b,
 	4 : lambda a,b : a / b,
-	99: lambda a,b : End(),
+	99: lambda a=0,b=0 : End(),
 }
 
 def run(op,a,b):
