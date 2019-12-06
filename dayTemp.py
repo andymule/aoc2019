@@ -1,8 +1,9 @@
 import math
 import sys
 import pprint
+import collections
 
-filepath = "day3.txt"
+filepath = "day6.txt"
 words = []
 
 with open(filepath) as file:
