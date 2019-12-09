@@ -8,7 +8,7 @@ filepath = "day9.txt"
 words = SortedDict()
 relptr = 0
 ptr = 0
-_input = 2  # BOOST test mode
+_input = 2
 
 codes = {
     1: lambda a, b: a + b,
@@ -77,21 +77,18 @@ def runDay9():
         for n in range(0, len(wordsraw)):
             words[n] = wordsraw[n]
         while True:
-            # try:
             instruct = str(next(ptr))  # string
             op = int(instruct[-2:])
-            if instruct == "21107":
-                jk = 69
             m1 = 0
             m2 = 0
             m3 = 0
-            if len(instruct) > 2:
+            if len(instruct) > 2:  # mode 1 
                 m1 = int(instruct[-3:-2])
-            if len(instruct) > 3:
+            if len(instruct) > 3:  # mode 2 
                 m2 = int(instruct[-4:-3])
-            if len(instruct) > 4:
+            if len(instruct) > 4:  # mode 3
                 m3 = int(instruct[-5:-4])
-            if op == 1 or op == 2:
+            if op == 1 or op == 2:  # arithmetic
                 p1 = RefOrVal(m1, next(ptr))
                 p2 = RefOrVal(m2, next(ptr))
                 at = int(next(ptr))
@@ -99,41 +96,41 @@ def runDay9():
                 assign(m3, at, newval)
             if op == 3:  # assign
                 assign(m1, next(ptr), _input)
-            if op == 4:
+            if op == 4: # output
                 p1 = RefOrVal(m1, next(ptr))
                 print(p1)
-            if op == 5:
+            if op == 5: # branch not zero
                 p1 = RefOrVal(m1, next(ptr))
                 p2 = RefOrVal(m2, next(ptr))
                 if p1 != 0:
                     ptr = p2
-            if op == 6:
+            if op == 6: # branch zero
                 p1 = RefOrVal(m1, next(ptr))
                 p2 = RefOrVal(m2, next(ptr))
                 if p1 == 0:
                     ptr = p2
-            if op == 7:
+            if op == 7: # less than
                 p1 = RefOrVal(m1, next(ptr))
                 p2 = RefOrVal(m2, next(ptr))
                 at = int(next(ptr))
                 if p1 < p2:
-                    assign(m3,at,1)
+                    assign(m3, at, 1)
                 else:
-                    assign(m3,at,0)
-            if op == 8:
+                    assign(m3, at, 0)
+            if op == 8: # equal to
                 p1 = RefOrVal(m1, next(ptr))
                 p2 = RefOrVal(m2, next(ptr))
                 at = int(next(ptr))
                 if p1 == p2:
-                    assign(m3,at,1)
+                    assign(m3, at, 1)
                 else:
-                    assign(m3,at,0)
-            if op == 9:
+                    assign(m3, at, 0)
+            if op == 9: # move ref
                 p1 = RefOrVal(m1, next(ptr))
                 relptr += p1
-            if op == 99:
+            if op == 99: # exit
+                print("EXITING")
                 sys.exit(0)
-        # except Exception as ex:
-        #     return
+
 
 runDay9()
