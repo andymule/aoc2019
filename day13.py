@@ -70,10 +70,11 @@ joystickX = 0
 lasttwo = [0,0]
 outputcounter = 0
 tilecount = 0
+lastballX = 0
 def runDay9():
     global words
     global relptr
-    global ptr, tilecount, outputcounter, joystickX
+    global ptr, tilecount, outputcounter, joystickX, lastballX
     with open(filepath) as file:
         alldata = file.read().replace("\n", "")
         wordsraw = [int(n) for n in alldata.split(",")]  # ints
@@ -104,14 +105,34 @@ def runDay9():
                 p1 = RefOrVal(m1, next(ptr))
                 outputcounter += 1
                 outputcounter = outputcounter % 3
-                if outputcounter == 0 and p1 == 2:
-                    if lasttwo[0] < joystickX:
-                        _input = 
+                if lasttwo[0]==-1 and lasttwo[1]==0:
+                    print(p1) #print score    
+                # print(p1)
+                if outputcounter == 0 and p1 == 2: #command and block
+                    # if lasttwo[0] < joystickX:
+                        # pass
+                        # _input = 
                     tilecount += 1
+                elif outputcounter == 0 and p1 == 4: #command and ball
+                    lastballX = lasttwo[0]
+                    if joystickX < lastballX:
+                        _input = 1
+                    elif joystickX > lastballX:
+                        _input = -1
+                    else:
+                        _input = 0
+                elif outputcounter == 0 and p1 == 3: #command and paddle
+                    joystickX = lasttwo[0]    
+                    if joystickX < lastballX:
+                        _input = 1
+                    elif joystickX > lastballX:
+                        _input = -1
+                    else:
+                        _input = 0
                 else:
                     lasttwo.pop(0)
                     lasttwo.append(p1)
-                print(p1)
+                
             if op == 5:  # branch not zero
                 p1 = RefOrVal(m1, next(ptr))
                 p2 = RefOrVal(m2, next(ptr))
