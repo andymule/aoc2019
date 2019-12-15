@@ -1,11 +1,16 @@
 import math
 import sys
 import pprint
-import collections
+from collections import defaultdict
 
-filepath = "day6.txt"
+filepath = "day14.txt"
 words = []
-
+reacts = defaultdict(lambda: {})
+# startingore = 30
 with open(filepath) as file:
-    alldata = file.read().replace("\n", "")
-    words = [int(n) for n in alldata.split(",")]
+    alldata = file.read().split()
+    for l in alldata:
+        print(l.split(" => "))
+
+
+
