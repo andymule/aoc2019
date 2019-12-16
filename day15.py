@@ -5,7 +5,6 @@ import json
 import keyboard
 import networkx as nx
 from sortedcontainers import SortedDict
-import curses
 
 # from pynput import keyboard
 
