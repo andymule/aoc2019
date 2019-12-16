@@ -1,14 +1,16 @@
-import math
-import sys
-import pprint
+import math, sys, pprint, os
 from sortedcontainers import SortedDict
+from collections import defaultdict
+import keyboard
 
-filepath = "day9.txt"
+filepath = "day15.txt"
 
 words = SortedDict()
+MAP = defaultdict(lambda: defaultdict(lambda: " "))
 relptr = 0
 ptr = 0
 _input = 1
+lastcode = 0
 
 codes = {
     1: lambda a, b: a + b,
@@ -21,9 +23,7 @@ def run(op, a, b):
 
 
 def assign(mode, at, val):
-    global words
-    global relptr
-    global ptr
+    global words, relptr, ptr
     if mode == 0:
         words[at] = val
     elif mode == 2:
@@ -34,9 +34,7 @@ def assign(mode, at, val):
 
 
 def RefOrVal(mode, get):
-    global words
-    global relptr
-    global ptr
+    global words, relptr, ptr
     if mode == 0:
         try:
             return int(words[get])
@@ -57,8 +55,7 @@ def RefOrVal(mode, get):
 
 
 def next(p):
-    global words
-    global ptr
+    global words, ptr
     ptr += 1
     try:
         return int(words[ptr - 1])
@@ -67,10 +64,31 @@ def next(p):
         return int(words[ptr - 1])
 
 
+def DrawMap():
+    global MAP
+    os.system('cls' if os.name == 'nt' else 'clear')  # clears screen
+    print('\n'*80) # prints 80 line breaks
+    yStart = sorted(MAP.keys())[0]
+    ySpan = len(MAP.keys())
+    minX = 0
+    maxX = 0
+    for y in range(yStart, ySpan):
+        for x in MAP[y].keys():
+            if x < minX:
+                minX = x
+            if x > maxX:
+                maxX = x
+    for y in range(yStart, ySpan):
+        s = ""
+        for x in range(minX, maxX+1):
+            s += MAP[y][x]
+        print(s)
+
+MAP[0][0] = '@'
+
+
 def runDay15():
-    global words
-    global relptr
-    global ptr
+    global words, lastcode, relptr, ptr
     with open(filepath) as file:
         alldata = file.read().replace("\n", "")
         wordsraw = [int(n) for n in alldata.split(",")]  # ints
@@ -95,10 +113,24 @@ def runDay15():
                 newval = run(op, p1, p2)
                 assign(m3, at, newval)
             if op == 3:  # assign
-                assign(m1, next(ptr), _input)
+                move = 1
+                DrawMap()
+                key = keyboard.read_key()
+                if key == 'a':
+                    move = 3
+                if key == 'w':
+                    move = 1
+                if key == 's':
+                    move = 2
+                if key == 'd':
+                    move = 4
+                assign(m1, next(ptr), move)
+                # assign(m1, next(ptr), _input)
             if op == 4:  # output
                 p1 = RefOrVal(m1, next(ptr))
-                print(p1)
+                lastcode = p1
+
+                # print(p1)
             if op == 5:  # branch not zero
                 p1 = RefOrVal(m1, next(ptr))
                 p2 = RefOrVal(m2, next(ptr))
@@ -131,5 +163,6 @@ def runDay15():
             if op == 99:  # exit
                 print("EXITING")
                 sys.exit(0)
+
 
 runDay15()
