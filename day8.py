@@ -12,7 +12,7 @@ def matprint(mat, fmt="g"):
         print("")
 # 0 is black, 1 is white, and 2 is transparent.
 filepath = "day8.txt"
-words = []
+RAM = []
 layers = []
 # image = defaultdict(lambda: defaultdict(lambda: None))
 # image=[] # 25 x 6

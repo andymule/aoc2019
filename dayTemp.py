@@ -4,7 +4,7 @@ import pprint
 from collections import defaultdict
 
 filepath = "day14.txt"
-words = []
+RAM = []
 reacts = defaultdict(lambda: {})
 # startingore = 30
 with open(filepath) as file:

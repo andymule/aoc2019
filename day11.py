@@ -7,7 +7,7 @@ from collections import defaultdict
 # filepath = "/mnt/d/Webs/aoc2019/day11.txt"
 filepath = "day11.txt"
 
-words = SortedDict()
+RAM = SortedDict()
 relptr = 0
 ptr = 0
 _input = 1
@@ -85,7 +85,7 @@ def run(op, a, b):
 
 
 def assign(mode, at, val):
-    global words
+    global RAM
     global relptr
     global ptr
     if mode == 0:
@@ -99,7 +99,7 @@ def assign(mode, at, val):
 
 
 def RefOrVal(mode, get):
-    global words
+    global RAM
     global relptr
     global ptr
     if mode == 0:
@@ -122,7 +122,7 @@ def RefOrVal(mode, get):
 
 
 def next(p):
-    global words
+    global RAM
     global ptr
     ptr += 1
     try:
@@ -134,7 +134,7 @@ def next(p):
 #part 2
 paint[0][0] = 1
 def runDay11():
-    global words
+    global RAM
     global relptr
     global ptr, flipflop, _input
     with open(filepath) as file:

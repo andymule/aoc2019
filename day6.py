@@ -28,7 +28,7 @@ def DFSUtil(self, v, visited):
         self.DFSUtil(v, visited)
 
 filepath = "day6.txt"
-words = []
+RAM = []
 relates = defaultdict(lambda:[])
 countat = {}
 parent = {}
@@ -40,8 +40,8 @@ def diff(first, second):
 
 with open(filepath) as file:
     alldata = file.read() #.replace("\n", "")
-    words = alldata.split()
-    for w in words:
+    RAM = alldata.split()
+    for w in RAM:
         s = w.split(")")
         relates[s[0]].append(s[1])
         parent[s[1]]=s[0]

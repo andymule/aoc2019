@@ -6,7 +6,7 @@ filepath = "day2.txt"
 
 x = 0
 y = 0
-words = []
+RAM = []
 
 codes = {
     1: lambda a, b: a + b,
@@ -18,7 +18,7 @@ codes = {
 
 
 def End():
-    global words
+    global RAM
     if x == 12 and y == 2:
         print("{0}".format(words[0]))
     if words[0] == 19690720:
@@ -31,7 +31,7 @@ def run(op, a, b):
 
 
 def runDay2():
-    global words
+    global RAM
     with open(filepath) as file:
         alldata = file.read().replace("\n", "")
         words = [int(n) for n in alldata.split(",")]

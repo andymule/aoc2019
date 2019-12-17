@@ -5,7 +5,7 @@ from sortedcontainers import SortedDict
 
 filepath = "day9.txt"
 
-words = SortedDict()
+RAM = SortedDict()
 relptr = 0
 ptr = 0
 _input = 1
@@ -21,7 +21,7 @@ def run(op, a, b):
 
 
 def assign(mode, at, val):
-    global words
+    global RAM
     global relptr
     global ptr
     if mode == 0:
@@ -34,7 +34,7 @@ def assign(mode, at, val):
 
 
 def RefOrVal(mode, get):
-    global words
+    global RAM
     global relptr
     global ptr
     if mode == 0:
@@ -57,7 +57,7 @@ def RefOrVal(mode, get):
 
 
 def next(p):
-    global words
+    global RAM
     global ptr
     ptr += 1
     try:
@@ -68,7 +68,7 @@ def next(p):
 
 
 def runDay9():
-    global words
+    global RAM
     global relptr
     global ptr
     with open(filepath) as file:

@@ -19,7 +19,7 @@ goalY = -69
 startX = 0
 startY = 0
 
-words = SortedDict()
+RAM = SortedDict()
 relptr = 0
 ptr = 0
 filepath = "day15.txt"
@@ -35,7 +35,7 @@ def run(op, a, b):
 
 
 def assign(mode, at, val):
-    global words, relptr, ptr
+    global RAM, relptr, ptr
     if mode == 0:
         words[at] = val
     elif mode == 2:
@@ -46,7 +46,7 @@ def assign(mode, at, val):
 
 
 def RefOrVal(mode, get):
-    global words, relptr, ptr
+    global RAM, relptr, ptr
     if mode == 0:
         try:
             return int(words[get])
@@ -67,7 +67,7 @@ def RefOrVal(mode, get):
 
 
 def nextPtr(p):
-    global words, ptr
+    global RAM, ptr
     ptr += 1
     try:
         return int(words[ptr - 1])
@@ -110,7 +110,7 @@ def DrawMap():
 
 
 def runDay15():
-    global words, relptr, ptr, xPos, yPos, goalX, goalY, MAP, manualStepper
+    global RAM, relptr, ptr, xPos, yPos, goalX, goalY, MAP, manualStepper
     with open(filepath) as file:
         alldata: str = file.read().replace("\n", "")
         wordsraw = [int(n) for n in alldata.split(",")]  # ints

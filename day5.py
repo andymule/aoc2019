@@ -4,15 +4,15 @@ import pprint
 
 filepath = "day5.txt"
 
-words = []
+RAM = []
 _input = 5
 
 def assign(a,b):
-    global words
+    global RAM
     words[b] = a
 
 def output(a):
-    global words
+    global RAM
     print(words[a])
 
 codes = {
@@ -25,7 +25,7 @@ codes = {
 
 
 def End():
-    global words
+    global RAM
     if x == 12 and y == 2:
         print("{0}".format(words[0]))
     if words[0] == 19690720:
@@ -37,7 +37,7 @@ def run(op, a, b):
     return codes[op](a, b)
 
 def RefOrVal(mode,get):
-    global words
+    global RAM
     if mode==0:
         return int(words[get])
     else:
@@ -45,7 +45,7 @@ def RefOrVal(mode,get):
 
 # 99999 biggest
 def runDay5():
-    global words
+    global RAM
     with open(filepath) as file:
         alldata = file.read().replace("\n", "")
         words = [int(n) for n in alldata.split(",")] #ints
