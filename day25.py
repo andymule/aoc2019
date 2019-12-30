@@ -1,8 +1,16 @@
-import math
 import sys
-import pprint
 from sortedcontainers import SortedDict
 from collections import defaultdict
+from itertools import combinations
+
+
+def sub_lists(my_list):
+    subs = []
+    for i in range(0, len(my_list) + 1):
+        temp = [list(x) for x in combinations(my_list, i)]
+        if len(temp) > 0:
+            subs.extend(temp)
+    return subs
 
 filepath = "day25.txt"
 
@@ -11,22 +19,6 @@ relptr = 0
 ptr = 0
 _input = 0
 image = defaultdict(lambda: defaultdict(lambda: '.'))
-commands = """NOT C T
-NOT E J
-AND T J
-NOT F T
-AND T J
-NOT B T
-NOT T T
-OR E T
-NOT T T
-OR T J
-AND D J
-NOT A T
-OR T J
-RUN
-"""
-commandptr = 0
 
 codes = {
     1: lambda a, b: a + b,
@@ -74,7 +66,7 @@ def RefOrVal(mode, get):
         sys.exit(1)
 
 
-def next(p):
+def getnext():
     global RAM
     global ptr
     ptr += 1
@@ -84,111 +76,156 @@ def next(p):
         RAM[ptr - 1] = 0
         return int(RAM[ptr - 1])
 
-# West is -> (sorry)
-#
-#  Hallway
-# [easter egg]
-#    |
-# Navigation     Engineer -- Observatory
-# [klein bottle] [photons]      |
-#    |                          |
-# Corridor ---- Sick bay  - Holodeck     Arcade --- Warp drive --- Kithcen -- Storage
-#              [astrolabe] [tambourine] [infinite] [escape pod] [molten lava] [coin]
-#                   |           |                                   |           |
-#             Gift center  ENTRANCE ------- Lab ------ Chocolate fountain    Checkpoint
-#                 [shell]       |      [dark matter]  [giant electromagnet]     |
-#                               |                                               |
-#                            passages ---- Crew quarters                       ???
-#                               |
-#                               |
-#                            stables
-#                           [hypercube]
-#
 
-GET_EASTER = """north
+GET_SEMI = """west
+take semiconductor
 east
-east
-north
-north
-take easter egg
-south
-south
-west
-west
-south
 """
-GET_KLEIN = """north
+GET_PLANET = """west
+west
+take planetoid
 east
 east
-north
+"""
+GET_FOOD = """west
+west
+west
+take food ration
+east
+east
+east
+"""
+GET_FIXED = """west
+west
+west
+west
+take fixed point
+east
+east
+east
+east
+"""
+GET_KLEIN = """west
+west
+west
+west
+west
 take klein bottle
-south
-west
-west
-south
-"""
-GET_ASTROLABE = """north
-take tambourine
-south
-"""
-GET_TAMBOURINE = """north
 east
-take astrolabe
-west
-south
-"""
-GET_SHELL = """north
 east
-south
-take shell
-north
+east
+east
+east
+"""
+GET_WEATHER = """west
+west
+west
 west
 south
+west
+take weather machine
+east
+north
+east
+east
+east
+east
 """
-GET_HYPERCUBE = """south
+GET_PLANET = """west
+west
+take planetoid
+east
+east
+"""
+GET_POINTER = """west
+west
 south
-take hypercube
+south
+south
+take pointer
 north
 north
-"""
-GET_DARK_MATTER = """west
-take dark matter
+north
+east
 east
 """
 GET_COIN = """west
 west
-north
-west
+south
+east
 take coin
-east
-south
-east
-east
-"""
-GOTO_CHECKPOINT = """west
 west
 north
+east
+east
+"""
+
+GET_CP = """west
 west
 south
+east
+east
+north
+east
+east
 """
+
+things = [
+    "food ration",
+    "fixed point",
+    "weather machine",
+    "semiconductor",
+    "planetoid",
+    "klein bottle",
+    "coin",
+    "pointer"
+]
+
+all = sub_lists(things)
+allcounter = 0
+
+dropall = """drop food ration
+drop fixed point
+drop weather machine
+drop semiconductor
+drop planetoid
+drop klein bottle
+drop coin
+drop pointer
+"""
+
+
+def newpicks(newtry):
+    mytry = ""
+    for t in newtry:
+        mytry += "take " + t + '\n'
+    return mytry
+
+
+def makeins():
+    global dropall, all, allcounter
+    newtry = all[allcounter]
+    allcounter += 1
+    thisone = dropall + newpicks(newtry) + "north\n"
+    return list(thisone)
 
 
 def runDay25():
     global RAM
     global relptr
-    global ptr, commands, commandptr
+    global ptr
     imageline = ""
     buf = ""
-    instruction_list = GET_EASTER + GET_KLEIN + GET_ASTROLABE + GET_TAMBOURINE + GET_SHELL + GET_HYPERCUBE + GET_DARK_MATTER + GET_COIN + GOTO_CHECKPOINT
+    instruction_list = GET_COIN + GET_FIXED + GET_FOOD + GET_KLEIN + GET_PLANET + GET_POINTER + GET_SEMI + GET_WEATHER + GET_CP
     instructions = [instruction + '\n' for instruction in instruction_list.split('\n')]
-
+    tooheavy = True
     with open(filepath) as file:
         alldata = file.read().replace("\n", "")
         wordsraw = [int(n) for n in alldata.split(",")]  # ints
         for n in range(0, len(wordsraw)):
             RAM[n] = wordsraw[n]
         while True:
-            instruct = str(next(ptr))  # string
+            instruct = str(getnext())  # string
             op = int(instruct[-2:])
             m1 = 0
             m2 = 0
@@ -200,69 +237,63 @@ def runDay25():
             if len(instruct) > 4:  # mode 3
                 m3 = int(instruct[-5:-4])
             if op == 1 or op == 2:  # arithmetic
-                p1 = RefOrVal(m1, next(ptr))
-                p2 = RefOrVal(m2, next(ptr))
-                at = int(next(ptr))
+                p1 = RefOrVal(m1, getnext())
+                p2 = RefOrVal(m2, getnext())
+                at = int(getnext())
                 newval = run(op, p1, p2)
                 if p1 == 1182:
                     jk = 69
                 assign(m3, at, newval)
             if op == 3:  # assign
                 if buf == "":
+                    if not instructions:
+                        instructions = makeins()
+
                     buf = instructions.pop(0)
+                    jk = 69
                     # buf = input(":") + '\n'
+                    # GET_COIN + GET_FIXED + GET_FOOD + GET_KLEIN + GET_PLANET + GET_POINTER + GET_SEMI + GET_WEATHER + GET_CP
                 c = buf[0]
                 buf = buf[1:]
                 read = ord(c)
-                assign(m1, next(ptr), read)
+                assign(m1, getnext(), read)
             if op == 4:  # output
-                p1 = RefOrVal(m1, next(ptr))
+                p1 = RefOrVal(m1, getnext())
                 imageline += chr(p1)
                 if chr(p1) == '\n':
-                    if len(imageline) == 1:
-                        jk = 69  # computer newline
-                        # INJECT()
                     print(imageline[:-1])
                     imageline = ""
-                # image[ycount][xcount] = chr(p1)
-                # if chr(p1) == '\n':
-                #     ycount += 1
-                #     xcount = 0
-                # else:
-                #     xcount += 1
-                # print(p1)
             if op == 5:  # branch not zero
-                p1 = RefOrVal(m1, next(ptr))
-                p2 = RefOrVal(m2, next(ptr))
+                p1 = RefOrVal(m1, getnext())
+                p2 = RefOrVal(m2, getnext())
                 if p1 != 0:
                     ptr = p2
             if op == 6:  # branch zero
-                p1 = RefOrVal(m1, next(ptr))
-                p2 = RefOrVal(m2, next(ptr))
+                p1 = RefOrVal(m1, getnext())
+                p2 = RefOrVal(m2, getnext())
                 if p1 == 0:
                     ptr = p2
             if op == 7:  # less than
-                p1 = RefOrVal(m1, next(ptr))
-                p2 = RefOrVal(m2, next(ptr))
-                at = int(next(ptr))
+                p1 = RefOrVal(m1, getnext())
+                p2 = RefOrVal(m2, getnext())
+                at = int(getnext())
                 if p1 < p2:
                     assign(m3, at, 1)
                 else:
                     assign(m3, at, 0)
             if op == 8:  # equal to
-                p1 = RefOrVal(m1, next(ptr))
-                p2 = RefOrVal(m2, next(ptr))
-                at = int(next(ptr))
+                p1 = RefOrVal(m1, getnext())
+                p2 = RefOrVal(m2, getnext())
+                at = int(getnext())
                 if p1 == p2:
                     assign(m3, at, 1)
                 else:
                     assign(m3, at, 0)
             if op == 9:  # move ref
-                p1 = RefOrVal(m1, next(ptr))
+                p1 = RefOrVal(m1, getnext())
                 relptr += p1
             if op == 99:  # exit
                 print("EXITING")
-                # sys.exit(0)
                 return
 
 
