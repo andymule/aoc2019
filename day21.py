@@ -4,56 +4,34 @@ import pprint
 from sortedcontainers import SortedDict
 from collections import defaultdict
 
-filepath = "day17.txt"
+filepath = "day21.txt"
 
 RAM = SortedDict()
 relptr = 0
 ptr = 0
 _input = 1
 image = defaultdict(lambda: defaultdict(lambda: '.'))
-commands = "A,A,A,A,A,A,A,A,A\n1,1,1,1\nR,8\nL,1\ny\n"
+commands = """NOT C T
+NOT E J
+AND T J
+NOT F T
+AND T J
+NOT B T
+NOT T T
+OR E T
+NOT T T
+OR T J
+AND D J
+NOT A T
+OR T J
+RUN
+"""
 commandptr = 0
-realcommands = []
-realcommands.append("L,10,R,8,R,6,R,10")
-realcommands.append("L,12,R,8,L,12,L,10")
-realcommands.append("R,8,R,6,R,10,L,12")
-realcommands.append("R,8,L,12,L,10,R,8")
-realcommands.append("R,8,L,10,R,8,R,8")
-realcommands.append("L,12,R,8,L,12,L,10")
-realcommands.append("R,8,R,6,R,10,L,10")
-realcommands.append("R,8,R,8,L,10,R,8")
-realcommands.append("R,6,R,10")
-
-realcommandcounter = 0
-
-
-def INJECT():
-    global realcommandcounter, realcommands, RAM
-    r = realcommands[realcommandcounter]
-    realcommandcounter += 1
-    index = 0
-    startdex = 1193
-    nums = r.split(",")
-    s = ""
-    RAM[startdex+index] = len(nums)
-    for n in nums:
-        index += 1
-        if n.isdigit():
-            RAM[startdex+index] = int(n)
-        else:
-            if n == 'R':
-                RAM[startdex + index] = -4
-            elif n == 'L':
-                RAM[startdex + index] = -5
-            else:
-                jk=69
-
 
 codes = {
     1: lambda a, b: a + b,
     2: lambda a, b: a * b,
 }
-
 
 def run(op, a, b):
     return codes[op](a, b)
@@ -76,10 +54,6 @@ def RefOrVal(mode, get):
     global RAM
     global relptr
     global ptr
-    if relptr + get == 1182 or get == 1182:
-        jk = 69
-    elif relptr + get == 1193 or get == 1193:
-        jk = 69
     if mode == 0:
         try:
             return int(RAM[get])
@@ -114,15 +88,12 @@ def runDay17():
     global RAM
     global relptr
     global ptr, commands, commandptr
-    xcount = 0
-    ycount = 0
     imageline = ""
     with open(filepath) as file:
         alldata = file.read().replace("\n", "")
         wordsraw = [int(n) for n in alldata.split(",")]  # ints
         for n in range(0, len(wordsraw)):
             RAM[n] = wordsraw[n]
-        RAM[0] = 2
         while True:
             instruct = str(next(ptr))  # string
             op = int(instruct[-2:])
@@ -146,6 +117,7 @@ def runDay17():
             if op == 3:  # assign
                 print("input:")
                 read = ord(commands[commandptr])
+                # read = int(input(":"))
                 commandptr += 1
                 assign(m1, next(ptr), read)
                 # assign(m1, next(ptr), _input)

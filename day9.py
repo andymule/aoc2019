@@ -25,9 +25,9 @@ def assign(mode, at, val):
     global relptr
     global ptr
     if mode == 0:
-        words[at] = val
+        RAM[at] = val
     elif mode == 2:
-        words[relptr + at] = val
+        RAM[relptr + at] = val
     else:
         print("ERROR ASSIGNING!")
         sys.exit(1)
@@ -39,18 +39,18 @@ def RefOrVal(mode, get):
     global ptr
     if mode == 0:
         try:
-            return int(words[get])
+            return int(RAM[get])
         except:
-            words[get] = 0
-            return int(words[get])
+            RAM[get] = 0
+            return int(RAM[get])
     elif mode == 1:
         return int(get)
     elif mode == 2:
         try:
-            return int(words[relptr + get])
+            return int(RAM[relptr + get])
         except:
-            words[relptr + get] = 0
-            return int(words[relptr + get])
+            RAM[relptr + get] = 0
+            return int(RAM[relptr + get])
     else:
         print("ERROR ACCESSING MEMORY")
         sys.exit(1)
@@ -61,10 +61,10 @@ def next(p):
     global ptr
     ptr += 1
     try:
-        return int(words[ptr - 1])
+        return int(RAM[ptr - 1])
     except:
-        words[ptr - 1] = 0
-        return int(words[ptr - 1])
+        RAM[ptr - 1] = 0
+        return int(RAM[ptr - 1])
 
 
 def runDay9():
@@ -75,7 +75,7 @@ def runDay9():
         alldata = file.read().replace("\n", "")
         wordsraw = [int(n) for n in alldata.split(",")]  # ints
         for n in range(0, len(wordsraw)):
-            words[n] = wordsraw[n]
+            RAM[n] = wordsraw[n]
         while True:
             instruct = str(next(ptr))  # string
             op = int(instruct[-2:])
