@@ -84,6 +84,26 @@ def next(p):
         RAM[ptr - 1] = 0
         return int(RAM[ptr - 1])
 
+# West is -> (sorry)
+#
+#  Hallway
+# [easter egg]
+#    |
+# Navigation     Engineer -- Observatory
+# [klein bottle] [photons]      |
+#    |                          |
+# Corridor ---- Sick bay  - Holodeck     Arcade --- Warp drive --- Kithcen -- Storage
+#              [astrolabe] [tambourine] [infinite] [escape pod] [molten lava] [coin]
+#                   |           |                                   |           |
+#             Gift center  ENTRANCE ------- Lab ------ Chocolate fountain    Checkpoint
+#                 [shell]       |      [dark matter]  [giant electromagnet]     |
+#                               |                                               |
+#                            passages ---- Crew quarters                       ???
+#                               |
+#                               |
+#                            stables
+#                           [hypercube]
+#
 
 GET_EASTER = """north
 east
