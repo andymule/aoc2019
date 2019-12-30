@@ -5,7 +5,7 @@
         "pyplot",
         "relptr"
     ],
-    "python.pythonPath": "C:\\Users\\amun\\AppData\\Local\\Programs\\Python\\Python38-32\\python.exe",
+    "python.pythonPath": "C:\\Users\\xxsha\\AppData\\Local\\Programs\\Python\\Python38\\python.exe",
     "python.linting.pylintEnabled": true,
     "python.linting.enabled": true
 }
