@@ -2,16 +2,19 @@ import math
 import sys
 import pprint
 from collections import defaultdict
+from typing import Dict
+
 import networkx as nx
+from networkx import Graph
 
 
-def buildgraph(check, parent):
+def buildgraph(symbol, check, parent, needtovisit):
     y = check[0]
     x = check[1]
     c = MAP[y][x]
-    G.add_node(check)
+    graphs[symbol].add_node(check)
     if parent:
-        G.add_edge(parent, check)
+        graphs[symbol].add_edge(parent, check)
     if c.isalpha():
         if c.islower():
             keys[c] = (y, x)
@@ -35,10 +38,10 @@ def buildgraph(check, parent):
         buildgraph(right, check)
 
 
-#TODO make paths to doors include picking up keys... make paths to doors include all prereqs then just find paths dummy
+# TODO make paths to doors include picking up keys... make paths to doors include all prereqs then just find paths dummy
 def findnextmove():
     global totalsteps, POS
-    nextmove = (-69,-69)
+    nextmove = (-69, -69)
     for key in keys.values():
         shortest = nx.shortest_path(G, key, POS)
         for door in doors.values():
@@ -47,7 +50,6 @@ def findnextmove():
         if len(shortest) < minpath:
             minpath = len(shortest)
             nextmove = key
-    i
     totalsteps += minpath
     POS = nextmove
 
@@ -60,20 +62,38 @@ for l in alldata:
 H = len(MAP)
 W = len(MAP[0])
 
-needtovisit = set()
-start = (0, 0)
-for y in range(H):
-    for x in range(W):
-        if MAP[y][x] == '@':
-            start = (y, x)
-        elif MAP[y][x] != '#':
-            needtovisit.add((y, x,))
-
 keys = {}  # defaultdict(lambda: None)
 doors = {}  # defaultdict(lambda: None)
-G = nx.Graph()
-buildgraph(tuple(start), None)
-POS = start
+graphs: Dict[str, Graph] = {}
+graphs["@"] = nx.Graph()
+
+akeys = set()
+adoors = set()
+for y in range(H):
+    for x in range(W):
+        c = MAP[y][x]
+        if c != '#' and c != '@':
+            if c.islower():
+                akeys.add(c)
+            else:
+                adoors.add(c)
+
+
+def findpathsfor(symbol):
+    needtovisit = set()
+    start = (0, 0)
+    for y in range(H):
+        for x in range(W):
+            if MAP[y][x] == symbol:
+                start = (y, x)
+            elif MAP[y][x] != '#':
+                needtovisit.add((y, x,))
+    buildgraph("@", tuple(start), None)
+    return needtovisit, start
+
+
+
+# POS = start
 
 minpath = 99999999
 # nextmove = start
