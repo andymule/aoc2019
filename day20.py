@@ -1,5 +1,4 @@
 import networkx as nx
-import os, sys, collections
 import matplotlib.pyplot as plt
 
 filepath = "day20.txt"
@@ -9,18 +8,6 @@ for line in alldata:
     MAP.append(line[:-1])
 H = len(MAP)
 W = len(MAP[0])
-
-
-# for y in range(H):
-#     s = ""
-#     for x in range(W):
-#         if (y, x) == start:
-#             s += '☻'
-#         elif (y, x) == end:
-#             s += '♥'
-#         else:
-#             s += MAP[y][x]
-#     print(s)
 
 
 def tupletomap(t):
@@ -97,9 +84,6 @@ def findportals():
                 portals[n] = visitme
 
 
-portals2 = {}
-
-
 def findportals2(level):
     global portals2
     needtovisit = set()
@@ -164,6 +148,7 @@ print("p1:")
 print(nx.shortest_path_length(graph, start, end))
 
 # part 2
+portals2 = {}
 graph = nx.MultiGraph()
 for i in range(26):
     findportals2(i)

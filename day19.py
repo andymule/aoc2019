@@ -8,7 +8,7 @@ filepath = "day19.txt"
 RAM = SortedDict()
 relptr = 0
 ptr = 0
-#_input = 1
+# _input = 1
 
 codes = {
     1: lambda a, b: a + b,
@@ -67,7 +67,7 @@ def next(p):
         return int(RAM[ptr - 1])
 
 
-def runDay9(y1,x1):
+def runDay9(y1, x1):
     global RAM
     global relptr, inside, outside
     global ptr
@@ -96,18 +96,18 @@ def runDay9(y1,x1):
                 newval = run(op, p1, p2)
                 assign(m3, at, newval)
             if op == 3:  # assign
-            	if firsttime == True:
-            		assign(m1, next(ptr), x1)
-            	else:
-                	assign(m1, next(ptr), y1)
-            	firsttime = False
+                if firsttime == True:
+                    assign(m1, next(ptr), x1)
+                else:
+                    assign(m1, next(ptr), y1)
+                firsttime = False
             if op == 4:  # output
                 p1 = RefOrVal(m1, next(ptr))
-                if p1==1:
-                	inside.add((y1,x1))
+                if p1 == 1:
+                    inside.add((y1, x1))
                 else:
-                    outside.add((y1,x1))
-               # print(p1)
+                    outside.add((y1, x1))
+            # print(p1)
             if op == 5:  # branch not zero
                 p1 = RefOrVal(m1, next(ptr))
                 p2 = RefOrVal(m2, next(ptr))
@@ -138,87 +138,74 @@ def runDay9(y1,x1):
                 p1 = RefOrVal(m1, next(ptr))
                 relptr += p1
             if op == 99:  # exit
-                return 
-               # sys.exit(0)
-               
-               
-def printmap(x,y):
-	global inside,outside
-	for yy in range(y+1):
-		s = ""
-		for xx in range(x+1):
-			if (yy,xx) in inside:
-				s+='#'
-			else:
-				s+='.'
-		print(s)
-	
+                return
+                # sys.exit(0)
 
-def dorun(yyy,xxx):
-    global RAM, relptr, ptr, inside
+
+def printmap(x, y):
+    global inside, outside
+    for yy in range(y + 1):
+        s = ""
+        for xx in range(x + 1):
+            if (yy, xx) in inside:
+                s += '#'
+            else:
+                s += '.'
+        print(s)
+
+
+def dorun(yyy, xxx):
+    global RAM, relptr, ptr, inside, outside
+    if (yyy, xxx) in inside or (xxx, yyy) in outside:
+        return
     RAM = SortedDict()
     relptr = 0
     ptr = 0
-    runDay9(yyy,xxx)
+    runDay9(yyy, xxx)
+
 
 inside = set()
 outside = set()
-hundreds=set()
-find=10
-xstop={}
-xstart={}
-highx=0
-highxcount=0
-ystop={}
-ystart={}
-highy=0
-highycount=0
-y=0
-x=0
+# manually calculated slope of beam from image
+slope = .3  # conservative manually found slope 
+stop = False
+y = 1130  # manual binary search to find
 while True:
-    if True:
-        firstx=99999999
-        firsty=99999999
-        lastx=0
-        lasty=0
-        
-        thissize=0
-        for yy in range(max(highy-1,0),y+1):
-    	    dorun(yy,x)
-    	    if (yy,x) in inside:
-                if yy<firsty:
-            	    firsty =yy
-                if yy>lasty:
-                    lasty=yy
-                thissize+=1
-        if thissize>=find:
-            hundreds.add((y,x))
-        else:
-        	if thissize>highxcount:
-        		highxcount = thissize
-        		highx = x
-        print(highy)
-        printmap(y,x)
-        y+=1
-        
-        
-        thissize=0
-        for xx in range(max(highx-1,0),x+1):
-    	    dorun(y, xx)
-    	    if (y,xx) in inside:
-                if xx<firstx:
-            	    firstx=xx
-                if xx>lastx:
-            	    lastx=xx
-                thissize+=1
-        if thissize>=find:
-            hundreds.add((y,x))
-        else:
-        	if thissize>highycount:
-        		highycount = thissize
-        		highy = y
-        print(highx)
-        printmap(y,x)
-        x+=1
-        
-#print(len(inside))
+    for x in range(int(y * slope) - 200, y + 2000, 100):
+        if x < 0:
+            break
+        dorun(y, x)
+        if (y, x) in inside:
+            thiscount = 0
+            minx = x
+            maxx = x
+            for xx in range(x, x - 101, -1):
+                dorun(y, xx)
+                if (y, xx) in inside:
+                    minx = min(minx, xx)
+                    maxx = max(maxx, xx)
+                    thiscount += 1
+            for xx in range(x + 1, x + 2000, 1):
+                dorun(y, xx)
+                if (y, xx) in inside:
+                    minx = min(minx, xx)
+                    maxx = max(maxx, xx)
+                    thiscount += 1
+                else:
+                    break
+            if thiscount >= 100:
+                # print(y, minx, maxx+1)
+                for xxx in range(minx, maxx + 1):
+                    ycount = 0
+                    for yyy in range(y, y + 100):
+                        dorun(yyy, xxx)
+                        if (yyy, xxx) in inside:
+                            ycount += 1
+                        else:
+                            break
+                        if ycount == 100 and (y, xxx + 99) in inside:
+                            print(xxx, y)
+                            break
+    y += 1
+
+print(x * 10000 + y)
